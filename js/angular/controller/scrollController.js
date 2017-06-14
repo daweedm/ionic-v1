@@ -6,7 +6,6 @@ IonicModule
 .controller('$ionicScroll', [
   '$scope',
   'scrollViewOptions',
-  '$log',
   '$timeout',
   '$window',
   '$location',
@@ -15,7 +14,6 @@ IonicModule
   '$ionicHistory',
 function($scope,
          scrollViewOptions,
-         $log,
          $timeout,
          $window,
          $location,
@@ -49,13 +47,8 @@ function($scope,
     .data('$$ionicScrollController', self);
 
   var deregisterInstance = $ionicScrollDelegate._registerInstance(
-    self, scrollViewOptions.delegateHandle, function(instance) {
-      var ret = $ionicHistory.isActiveScope($scope);
-      if(!ret && instance.$$delegateHandle && instance.$$delegateHandle.indexOf("-modal") > -1) {
-        $log.warn('Delegate for handle "' + instance.$$delegateHandle + '" is not active.');
-        return true;
-      }
-      return ret;
+    self, scrollViewOptions.delegateHandle, function() {
+      return $ionicHistory.isActiveScope($scope);
     }
   );
 
