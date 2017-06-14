@@ -125,6 +125,10 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
     show: function(target) {
       var self = this;
 
+      if (self._isShown) {
+        return $$q.when();
+      }
+
       if (self.scope.$$destroyed) {
         $log.error('Cannot call ' + self.viewType + '.show() after remove(). Please create a new ' + self.viewType + ' instance.');
         return $$q.when();
@@ -211,6 +215,9 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
      */
     hide: function() {
       var self = this;
+      if (!self._isShown) {
+        return $$q.when();
+      }
       var modalEl = jqLite(self.modalEl);
 
       // on iOS, clicks will sometimes bleed through/ghost click on underlying
