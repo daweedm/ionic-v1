@@ -246,7 +246,7 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
           $ionicBody.removeClass(self.viewType + '-open');
         }
         self.el.classList.add('hide');
-      }, self.hideDelay || 320);
+      }, angular.isNumber(self.hideDelay) ? self.hideDelay : 320);
     },
 
     /**
