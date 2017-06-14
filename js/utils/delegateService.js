@@ -69,9 +69,16 @@
           var args = arguments;
           var foundInstancesCount = 0;
           var returnValue;
+          var foundDeferredInstancesCount = 0;
+          var deferred;
 
           this._instances.forEach(function(instance) {
-            if ((!handle || handle == instance.$$delegateHandle) && instance.$$filterFn(instance)) {
+            if ((!handle || handle == instance.$$delegateHandle)) {
+              if (instance.$$filterFn(instance)) {
+                  foundDeferredInstancesCount++;
+                  deferred = instance;
+                  return;
+              }
               foundInstancesCount++;
               var ret = instance[methodName].apply(instance, args);
               //Only return the value from the first call
@@ -80,6 +87,11 @@
               }
             }
           });
+
+          if (!foundInstancesCount && foundDeferredInstancesCount === 1) {
+            foundInstancesCount++;
+            returnValue = deferred[methodName].apply(deferred, args);
+          }
 
           if (!foundInstancesCount && handle) {
             return $log.warn(
