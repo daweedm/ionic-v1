@@ -180,6 +180,7 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
         ionic.trigger('resize');
         self.scope.$parent && self.scope.$parent.$broadcast(self.viewType + '.shown', self);
         self.el.classList.add('active');
+        self.el.style.zIndex = Math.floor(Date.now() / 1000);
         self.scope.$broadcast('$ionicHeader.align');
         self.scope.$broadcast('$ionicFooter.align');
         self.scope.$broadcast('$ionic.modalPresented');
