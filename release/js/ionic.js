@@ -739,7 +739,7 @@ window.ionic.version = '1.3.3';
     // whatever lookup was done to find this element failed to find it
     // so we can't listen for events on it.
     if(element === null) {
-      void 0;
+      console.error('Null element passed to gesture (element does not exist). Not listening for gesture');
       return this;
     }
 
@@ -2465,7 +2465,9 @@ window.ionic.version = '1.3.3';
   function verifyPlatformReady() {
     setTimeout(function() {
       if(!self.isReady && self.isWebView()) {
-        void 0;
+        console.warn('Possible issue: deviceready did not fire in a reasonable amount of time. ' +
+        'This can be caused by plugins in an inconsistent state. One possible solution: uninstall/remove all ' +
+        'plugins and reinstall them. Additionally, one or more plugins might be faulty or out of date.');
       }
     }, platformReadyTimer);
   }
@@ -6996,7 +6998,7 @@ ionic.scroll = {
 (function(ionic) {
   var NOOP = function() {};
   var deprecated = function(name) {
-    void 0;
+    console.error('Method not available in native scrolling: ' + name);
   };
   ionic.views.ScrollNative = ionic.views.View.inherit({
 
