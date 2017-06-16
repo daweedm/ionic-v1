@@ -56818,6 +56818,7 @@ function($ionicTemplateLoader, $ionicBackdrop, $q, $timeout, $rootScope, $ionicB
     });
 
     self.show = function() {
+      self.element[0].style.zIndex = Math.floor(Date.now() / 1000);
       if (self.isShown || self.removed) return;
 
       $ionicModal.stack.add(self);
