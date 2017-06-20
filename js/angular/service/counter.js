@@ -1,8 +1,7 @@
 IonicModule
     .factory('$ionicCounter', [
-        '$ionicModal',
-        '$ionicPopup',
-        function($ionicModal, $ionicPopup) {
+        '$ionicSubWindowStacks',
+        function($ionicSubWindowStacks) {
           var base = 1000;
           var counter = base;
           return {
@@ -15,7 +14,7 @@ IonicModule
           }
 
           function shouldBeReset() {
-            if($ionicModal._modalStack.length === 0 && $ionicPopup._popupStack.length === 0) {
+            if($ionicSubWindowStacks.areAllEmpty()) {
               counter = base;
             }
           }
