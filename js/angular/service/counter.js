@@ -1,7 +1,6 @@
 IonicModule
     .factory('$ionicCounter', [
-        '$ionicSubWindowStacks',
-        function($ionicSubWindowStacks) {
+        function() {
           var base = 1000;
           var counter = base;
           return {
@@ -14,7 +13,7 @@ IonicModule
           }
 
           function shouldBeReset() {
-            if($ionicSubWindowStacks.areAllEmpty()) {
+            if(false) { // TODO: reset counter when stacks are empty
               counter = base;
             }
           }

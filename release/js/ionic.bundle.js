@@ -53790,8 +53790,7 @@ function($document, $ionicBody, $timeout) {
 
 IonicModule
     .factory('$ionicCounter', [
-        '$ionicSubWindowStacks',
-        function($ionicSubWindowStacks) {
+        function() {
           var base = 1000;
           var counter = base;
           return {
@@ -53804,7 +53803,7 @@ IonicModule
           }
 
           function shouldBeReset() {
-            if($ionicSubWindowStacks.areAllEmpty()) {
+            if(false) { // TODO: reset counter when stacks are empty
               counter = base;
             }
           }
@@ -57526,20 +57525,6 @@ IonicModule
 ]));
 
 
-IonicModule
-    .factory('$ionicSubWindowStacks', [
-        '$ionicModal',
-        '$ionicPopup',
-        function ($ionicModal, $ionicPopup) {
-          return {
-            areAllEmpty: areAllEmpty
-          };
-
-          function areAllEmpty() {
-            return $ionicModal._modalStack.length === 0 && $ionicPopup._popupStack.length === 0;
-          }
-        }
-    ]);
 /**
  * @ngdoc service
  * @name $ionicTabsDelegate
