@@ -71,12 +71,23 @@ function($document, $timeout, $$rAF, $rootScope) {
      * Releases the backdrop.
      */
     release: release,
+    /**
+     * @ngdoc method
+     * @name $ionicBackdrop#promote
+     * @description
+     * Promote the backdrop on the z axis
+     */
+    promote: promote,
 
     getElement: getElement,
 
     // exposed for testing
     _element: el
   };
+
+  function promote(zIndex) {
+    getElement()[0].style.zIndex = zIndex;
+  }
 
   function retain() {
     backdropHolds++;

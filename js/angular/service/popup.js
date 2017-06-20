@@ -112,6 +112,7 @@ IonicModule
 .factory('$ionicPopup', [
   '$ionicTemplateLoader',
   '$ionicBackdrop',
+  '$ionicCounter',
   '$q',
   '$timeout',
   '$rootScope',
@@ -120,7 +121,7 @@ IonicModule
   '$ionicPlatform',
   '$ionicModal',
   'IONIC_BACK_PRIORITY',
-function($ionicTemplateLoader, $ionicBackdrop, $q, $timeout, $rootScope, $ionicBody, $compile, $ionicPlatform, $ionicModal, IONIC_BACK_PRIORITY) {
+function($ionicTemplateLoader, $ionicBackdrop, $ionicCounter, $q, $timeout, $rootScope, $ionicBody, $compile, $ionicPlatform, $ionicModal, IONIC_BACK_PRIORITY) {
   //TODO allow this to be configured
   var config = {
     stackPushDelay: 75
@@ -327,7 +328,8 @@ function($ionicTemplateLoader, $ionicBackdrop, $q, $timeout, $rootScope, $ionicB
     });
 
     self.show = function() {
-      self.element[0].style.zIndex = Math.floor(Date.now() / 1000);
+      $ionicBackdrop.promote($ionicCounter.getNext());
+      self.element[0].style.zIndex = $ionicCounter.getNext();
       if (self.isShown || self.removed) return;
 
       $ionicModal.stack.add(self);
@@ -347,6 +349,7 @@ function($ionicTemplateLoader, $ionicBackdrop, $q, $timeout, $rootScope, $ionicB
       if (!self.isShown) return callback();
 
       $ionicModal.stack.remove(self);
+      $ionicCounter.shouldBeReset();
       self.isShown = false;
       self.element.removeClass('active');
       self.element.addClass('popup-hidden');

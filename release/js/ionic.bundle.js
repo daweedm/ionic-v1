@@ -53555,12 +53555,23 @@ function($document, $timeout, $$rAF, $rootScope) {
      * Releases the backdrop.
      */
     release: release,
+    /**
+     * @ngdoc method
+     * @name $ionicBackdrop#promote
+     * @description
+     * Promote the backdrop on the z axis
+     */
+    promote: promote,
 
     getElement: getElement,
 
     // exposed for testing
     _element: el
   };
+
+  function promote(zIndex) {
+    getElement()[0].style.zIndex = zIndex;
+  }
 
   function retain() {
     backdropHolds++;
@@ -53777,6 +53788,29 @@ function($document, $ionicBody, $timeout) {
   };
 }]);
 
+IonicModule
+    .factory('$ionicCounter', [
+        '$ionicModal',
+        '$ionicPopup',
+        function($ionicModal, $ionicPopup) {
+          var base = 1000;
+          var counter = base;
+          return {
+            getNext: getNext,
+            shouldBeReset: shouldBeReset
+          };
+
+          function getNext() {
+            return ++counter;
+          }
+
+          function shouldBeReset() {
+            if($ionicModal._modalStack.length === 0 && $ionicPopup._popupStack.length === 0) {
+              counter = base;
+            }
+          }
+        }
+    ]);
 /**
  * @ngdoc service
  * @name $ionicGesture
@@ -55681,6 +55715,7 @@ function($ionicLoadingConfig, $ionicBody, $ionicTemplateLoader, $ionicBackdrop, 
 IonicModule
 .factory('$ionicModal', [
   '$rootScope',
+  '$ionicCounter',
   '$ionicBody',
   '$compile',
   '$timeout',
@@ -55691,7 +55726,7 @@ IonicModule
   '$ionicClickBlock',
   '$window',
   'IONIC_BACK_PRIORITY',
-function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTemplateLoader, $$q, $log, $ionicClickBlock, $window, IONIC_BACK_PRIORITY) {
+function($rootScope, $ionicCounter, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTemplateLoader, $$q, $log, $ionicClickBlock, $window, IONIC_BACK_PRIORITY) {
 
   /**
    * @ngdoc controller
@@ -55795,7 +55830,7 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
         ionic.trigger('resize');
         self.scope.$parent && self.scope.$parent.$broadcast(self.viewType + '.shown', self);
         self.el.classList.add('active');
-        self.el.style.zIndex = Math.floor(Date.now() / 1000);
+        self.el.style.zIndex = $ionicCounter.getNext();
         self.scope.$broadcast('$ionicHeader.align');
         self.scope.$broadcast('$ionicFooter.align');
         self.scope.$broadcast('$ionic.modalPresented');
@@ -55833,6 +55868,7 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
       // elements
       $ionicClickBlock.show(600);
       stack.remove(self);
+      $ionicCounter.shouldBeReset();
 
       self.el.classList.remove('active');
       modalEl.addClass('ng-leave');
@@ -55996,7 +56032,8 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
       });
     },
 
-    stack: stack
+    stack: stack,
+    _modalStack: modalStack
   };
 }]);
 
@@ -56603,6 +56640,7 @@ IonicModule
 .factory('$ionicPopup', [
   '$ionicTemplateLoader',
   '$ionicBackdrop',
+  '$ionicCounter',
   '$q',
   '$timeout',
   '$rootScope',
@@ -56611,7 +56649,7 @@ IonicModule
   '$ionicPlatform',
   '$ionicModal',
   'IONIC_BACK_PRIORITY',
-function($ionicTemplateLoader, $ionicBackdrop, $q, $timeout, $rootScope, $ionicBody, $compile, $ionicPlatform, $ionicModal, IONIC_BACK_PRIORITY) {
+function($ionicTemplateLoader, $ionicBackdrop, $ionicCounter, $q, $timeout, $rootScope, $ionicBody, $compile, $ionicPlatform, $ionicModal, IONIC_BACK_PRIORITY) {
   //TODO allow this to be configured
   var config = {
     stackPushDelay: 75
@@ -56818,7 +56856,8 @@ function($ionicTemplateLoader, $ionicBackdrop, $q, $timeout, $rootScope, $ionicB
     });
 
     self.show = function() {
-      self.element[0].style.zIndex = Math.floor(Date.now() / 1000);
+      $ionicBackdrop.promote($ionicCounter.getNext());
+      self.element[0].style.zIndex = $ionicCounter.getNext();
       if (self.isShown || self.removed) return;
 
       $ionicModal.stack.add(self);
@@ -56838,6 +56877,7 @@ function($ionicTemplateLoader, $ionicBackdrop, $q, $timeout, $rootScope, $ionicB
       if (!self.isShown) return callback();
 
       $ionicModal.stack.remove(self);
+      $ionicCounter.shouldBeReset();
       self.isShown = false;
       self.element.removeClass('active');
       self.element.addClass('popup-hidden');
